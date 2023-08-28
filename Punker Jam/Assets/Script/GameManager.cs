@@ -2,7 +2,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using static Movement;
-using static SkillTree;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,7 +32,7 @@ public class GameManager : MonoBehaviour
     {
         newStat = true;
         loadStat = false;
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex+1);
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
         Destroy(GameObject.Find("Lighting"));
         Time.timeScale = 1f;
     }
@@ -63,7 +62,5 @@ public class GameManager : MonoBehaviour
             var eventSystem = EventSystem.current;
             eventSystem.SetSelectedGameObject(firstPauseButton, new BaseEventData(eventSystem));
         }
-        if (SceneManager.GetActiveScene().buildIndex > 0)
-            Debug.Log(skillTree.skillPoint);
     }
 }
