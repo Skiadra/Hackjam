@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using static SkillTree;
 
 public class Movement : MonoBehaviour
 {
@@ -52,27 +51,40 @@ public class Movement : MonoBehaviour
     public float yWallJump;
 
 
-    private enum Status { idle, walking, running, jumping, falling}
+    private enum Status { idle, walking, running, jumping, falling }
     private Status state = Status.idle;
-    private void Awake(){ move = this; }
+    private void Awake()
+    {
+        if (move != null & move != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            move = this;
+        }
+    }
 
     // Start is called before the first frame update
     private void Start()
     {
-        if (GameManager.loadStat)
+        if (saveLoadSystem)
         {
-            loadPos();
-            GameManager.loadStat = false;
+            if (GameManager.loadStat)
+            {
+                loadPos();
+                GameManager.loadStat = false;
+            }
+            if (!GameManager.newStat)
+            {
+                loadData();
+                Debug.Log("Loaded");
+            }
+            GameManager.newStat = false;
+            // skillTree.skillPointAdd();
+            saveData();
         }
-        if (!GameManager.newStat)
-        {
-            loadData();
-            Debug.Log("Loaded");
-        }
-        GameManager.newStat = false;
-        skillTree.skillPointAdd();
-        saveData();
-        rb =  GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         collide = GetComponent<BoxCollider2D>();
         anima = GetComponent<Animator>();
@@ -82,16 +94,16 @@ public class Movement : MonoBehaviour
 
     // Update is called once per frame
     private void Update()
-    {   
+    {
         if (!inControl)
         {
-            rb.velocity = new Vector2(0,rb.velocity.y);//Kalo lagi buka menu ga bisa gerak
+            rb.velocity = new Vector2(0, rb.velocity.y);//Kalo lagi buka menu ga bisa gerak
             return;
         }
-        if(isDashing)
+        if (isDashing)
         {
             return;
-        }   
+        }
         //HORIZONTAL MOVEMENT
         acceleration = 0;
         multiplierX = 0;
@@ -99,24 +111,26 @@ public class Movement : MonoBehaviour
         varX = Input.GetAxisRaw("Horizontal");
 
         //Kalo di pencet kanan kiri speed max
-        if(varX != 0)
+        if (varX != 0)
         {
             facing = varX;
             multiplierX = varX;
-        } else if (dirX !=0 && varX == 0) //Kalau horizontal move key baru dilepas bakal tetep ada akselerasi
+        }
+        else if (dirX != 0 && varX == 0) //Kalau horizontal move key baru dilepas bakal tetep ada akselerasi
         {
-            acceleration = (dirX/4)*speed;
+            acceleration = dirX / 4 * speed;
         }
 
-        rb.velocity = new Vector2(multiplierX*speed+acceleration, rb.velocity.y); //rubah velocity
-        
+        rb.velocity = new Vector2(multiplierX * speed + acceleration, rb.velocity.y); //rubah velocity
+
         //VERTICAL MOVEMENT
-        if(IsGrounded())
+        if (IsGrounded())
         {
             jumpTimeCounter = coyoteTime;
             wallHugCounter = wallHugTime;
             if (canDashReset) dashReset = true;
-        } else
+        }
+        else
         {
             jumpTimeCounter -= Time.deltaTime;
         }
@@ -124,8 +138,8 @@ public class Movement : MonoBehaviour
         //Double Jump
         if (doubleJumpCount < 1 && Input.GetKeyDown(KeyCode.X) && !IsGrounded() && !wallHug && jumpTimeCounter <= .03f)
         {
-            rb.velocity = new Vector2 (rb.velocity.x, jumpForce);
-            if (dashReset) 
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            if (dashReset)
             {
                 StopCoroutine(Dash());
                 canDash = true;
@@ -136,12 +150,13 @@ public class Movement : MonoBehaviour
         if (doubleJump == true)
         {
             if (IsGrounded()) doubleJumpCount = 0;
-        } else doubleJumpCount = 1;
+        }
+        else doubleJumpCount = 1;
 
         //Jump
         if (Input.GetKeyDown(KeyCode.X) && jumpTimeCounter > 0f)
-        { 
-            rb.velocity = new Vector2 (rb.velocity.x, jumpForce);
+        {
+            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpTimeCounter = 0;
         }
 
@@ -151,16 +166,17 @@ public class Movement : MonoBehaviour
         }
 
         //Maximum falling speed
-        if (rb.velocity.y < maxFallSpeed)    
+        if (rb.velocity.y < maxFallSpeed)
             rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
 
         //Wall Hug
-        if(OnTheWall() == true && IsGrounded() == false && Input.GetButton("Horizontal") && rb.velocity.y <= 5f && wallHugCounter > 0)
+        if (OnTheWall() == true && IsGrounded() == false && Input.GetButton("Horizontal") && rb.velocity.y <= 5f && wallHugCounter > 0)
         {
             wallHug = true; //Aktivasi wallhug
             wallJumpTime = .08f;
             wallHugCounter -= Time.deltaTime;
-        } else
+        }
+        else
         {
             wallHug = false;//Wallhug mati
             if (wallJumpTime > 0)
@@ -173,46 +189,46 @@ public class Movement : MonoBehaviour
                 gravityOn();
         }
 
-        if(wallHug)
+        if (wallHug)
         {
             if (Input.GetKey(KeyCode.Space) && absorb)
             {
                 rb.velocity = new Vector2(rb.velocity.x, 0); //Kalo nahan space ga turun
                 gravityOff();
-                
+
             }
             else
             {
                 gravityOn();
-                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y/2);
+                rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y / 2);
             }
-        } 
+        }
 
         //Wall Jump
-        if(Input.GetKeyDown(KeyCode.X) && wallJumpTime > 0 && wallJumpCounter < maxWallJump)
+        if (Input.GetKeyDown(KeyCode.X) && wallJumpTime > 0 && wallJumpCounter < maxWallJump)
         {
             wallJump = true; //Aktivasi walljump
             wallJumpTime = 0;
             Invoke("WallJumpOff", 0.05f); //Mematikan wall jump dalam .05 detik
         }
 
-        if(wallJump)
+        if (wallJump)
         {
             float temp = jumpForce;
-            if (jumpForce >  25) jumpForce -= 5;
+            if (jumpForce > 25) jumpForce -= 5;
             rb.velocity = new Vector2(rb.velocity.x, jumpForce); //mengubah velocity
             jumpForce = temp;
             wallHug = false; //wallhug mati
             tr.emitting = true; //efek trail nyala
             Invoke("EmitOff", 0.25f); //mematikan efek trail dalam 0.25 detik
         }
-        if(IsGrounded())
+        if (IsGrounded())
         {
             wallJumpCounter = 0;
         }
 
         //Dash
-        if (Input.GetKeyDown(KeyCode.Z) && canDash && !wallHug) 
+        if (Input.GetKeyDown(KeyCode.Z) && canDash && !wallHug)
         {
             StartCoroutine(Dash());//Menyalakan dash
         }
@@ -225,16 +241,18 @@ public class Movement : MonoBehaviour
     private void Animate()
     {
         Status state;
-        
+
         if (dirX > 0 && wallHug == false)
         {
             sprite.flipX = true;
             state = Status.walking;
-        } else if (dirX < 0 && wallHug == false)
+        }
+        else if (dirX < 0 && wallHug == false)
         {
             state = Status.walking;
             sprite.flipX = false;
-        } else
+        }
+        else
         {
             state = Status.idle;
         }
@@ -242,7 +260,8 @@ public class Movement : MonoBehaviour
         if (rb.velocity.y > 0.01 && !wallHug)
         {
             state = Status.jumping;
-        } else if (rb.velocity.y < -0.1 && IsGrounded() == false && !wallHug)
+        }
+        else if (rb.velocity.y < -0.1 && IsGrounded() == false && !wallHug)
         {
             state = Status.falling;
         }
@@ -252,7 +271,7 @@ public class Movement : MonoBehaviour
             state = Status.running;
         }
 
-        if(wallJump)
+        if (wallJump)
         {
             sprite.flipX = true;
         }
@@ -268,7 +287,7 @@ public class Movement : MonoBehaviour
 
     private bool OnTheWall()
     {
-        return Physics2D.BoxCast(collide.bounds.center, new Vector2(collide.size.x+.2f, collide.size.y-.5f), 0f, new Vector2(0, 0), 0.1f, jumpableGround);
+        return Physics2D.BoxCast(collide.bounds.center, new Vector2(collide.size.x + .2f, collide.size.y - .5f), 0f, new Vector2(0, 0), 0.1f, jumpableGround);
     }
 
     private void WallJumpOff()
@@ -276,7 +295,7 @@ public class Movement : MonoBehaviour
         wallJump = false;
         wallJumpCounter++;
     }
-    
+
     private void gravityOff()
     {
         rb.gravityScale = 0;
@@ -294,7 +313,7 @@ public class Movement : MonoBehaviour
     //Save-Load method
     public void saveData()
     {
-        SaveSystem.SavePlayer(this, skillTree);
+        SaveSystem.SavePlayer(this);
     }
 
     public void loadData()
@@ -307,17 +326,17 @@ public class Movement : MonoBehaviour
         absorb = data.canAbsorb;
         maxFallSpeed = data.maxFallSpeed;
         maxWallJump = data.maxWallJump;
-        skillTree.addSkillPoints = data.skillPointsEachLevel;
-        for (int i = 0; i < skillTree.unlocked.Length; i++)
-        {
-            skillTree.unlocked[i] = false;
-        }
-        for (int i = 0; i < skillTree.unlocked.Length; i++)
-        {
-            skillTree.unlocked[i] = data.unlockedSkill[i];
-        }
-        skillTree.skillPoint = data.points;
-        skillTree.UpdateSkillUI();
+        // skillTree.addSkillPoints = data.skillPointsEachLevel;
+        // for (int i = 0; i < skillTree.unlocked.Length; i++)
+        // {
+        //     skillTree.unlocked[i] = false;
+        // }
+        // for (int i = 0; i < skillTree.unlocked.Length; i++)
+        // {
+        //     skillTree.unlocked[i] = data.unlockedSkill[i];
+        // }
+        // skillTree.skillPoint = data.points;
+        // skillTree.UpdateSkillUI();
     }
 
     public void loadPos()
@@ -336,7 +355,7 @@ public class Movement : MonoBehaviour
         isDashing = true;
         float originalGravity = rb.gravityScale;
         rb.gravityScale = 0; //Gravitasi menjadi 0
-        rb.velocity = new Vector2(facing*dashingPower, 0); //Mengubah velocity
+        rb.velocity = new Vector2(facing * dashingPower, 0); //Mengubah velocity
         tr.emitting = true; //Trail nyala
         yield return new WaitForSeconds(dashingTime);
         dirX = .4f;
