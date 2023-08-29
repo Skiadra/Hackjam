@@ -69,8 +69,9 @@ public class SkillList : MonoBehaviour
 
     public void AddLevel()
     {
+        Time.timeScale = 0f;
         OnLevelChange?.Invoke();
-        Movement.move.inControl = false;
+        // Movement.move.inControl = false;
         int num = 0;
         Debug.Log(SkillSet.Count);
         if (SkillSet.Count >= 2) num = 2;
@@ -95,5 +96,6 @@ public class SkillList : MonoBehaviour
         skillText.text = "Skill One";
         skillText2.text = "Skill Two";
         selectionSuccess = false;
+        Time.timeScale = 1f;
     }
 }

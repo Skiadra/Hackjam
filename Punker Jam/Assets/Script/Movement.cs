@@ -23,7 +23,7 @@ public class Movement : MonoBehaviour
     public float normGravity;
     private float dirX;
     private float varX;
-    private float facing;
+    public float facing;
     private float acceleration;
     public float jumpForce;
     public bool doubleJump;
@@ -49,6 +49,12 @@ public class Movement : MonoBehaviour
     private float wallJumpTime;
     // public float xWallJump;
     public float yWallJump;
+
+    //Attack Combat
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+    [SerializeField] ParticleSystem slash;
 
 
     private enum Status { idle, walking, running, jumping, falling }
@@ -104,6 +110,13 @@ public class Movement : MonoBehaviour
         {
             return;
         }
+
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            slash.Play();
+            Attack();
+        }
+
         //HORIZONTAL MOVEMENT
         acceleration = 0;
         multiplierX = 0;
@@ -366,4 +379,19 @@ public class Movement : MonoBehaviour
         canDash = true;
     }
 
+    private void Attack()
+    {
+
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            Debug.Log("Hit");
+        }
+    }
+
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
 }
