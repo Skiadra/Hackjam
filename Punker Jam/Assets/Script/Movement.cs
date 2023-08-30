@@ -193,7 +193,7 @@ public class Movement : MonoBehaviour
         {
             wallJump = true; //Aktivasi walljump
             wallJumpTime = 0;
-            Invoke("WallJumpOff", 0.05f); //Mematikan wall jump dalam .05 detik
+            Invoke(nameof(WallJumpOff), 0.05f); //Mematikan wall jump dalam .05 detik
         }
 
         if(wallJump)
