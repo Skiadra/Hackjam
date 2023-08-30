@@ -7,6 +7,8 @@ public class SlashScript : MonoBehaviour
 {
 
     float x;
+    float y;
+    int a;
 
     void Start()
     {
@@ -15,7 +17,9 @@ public class SlashScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKey(KeyCode.UpArrow)) a = 1;
+        else a = 0;
         Debug.Log(gameObject.transform.localPosition.x);
-        gameObject.transform.localPosition = new Vector2(x * Movement.move.facing, 0);
+        gameObject.transform.localPosition = new Vector2(x * Movement.move.currentFacingTime * (1 - a), 1 * a);
     }
 }
