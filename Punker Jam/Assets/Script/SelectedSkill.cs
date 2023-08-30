@@ -12,6 +12,6 @@ public class SelectedSkill : MonoBehaviour
         SkillList.skillSystem.SkillSet.Remove(selectedText.text);
         SkillList.skillSystem.ResetSkillButtons();
         LevelUpScreen.SetActive(false);
-        Movement.move.inControl = true;
+        // Movement.move.inControl = true;
     }
 }

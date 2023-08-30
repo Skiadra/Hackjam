@@ -32,31 +32,31 @@ public class PlayerCollision : MonoBehaviour
 
     void Update()
     {
-        if (interact && Input.GetKeyDown(KeyCode.UpArrow) && !isInteracting && move.inControl)
-        {
-            interactButton.SetActive(false);
-            menu.SetActive(true);
-            move.inControl = false;
-            var eventSystem = EventSystem.current;
-            eventSystem.SetSelectedGameObject(firstButton, new BaseEventData(eventSystem));
-            isInteracting = true;
-        }
-        if(Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            if (!list[0].activeSelf)
-            {
-                menu.SetActive(false);
-                move.inControl = true;
-                isInteracting = false;
-                return;
-            }
-            for (int i = 0; i < list.Length; i++)
-            {
-                list[i].SetActive(false);
-            }
-            menuButton.SetActive(true);
-            var eventSystem = EventSystem.current;
-            eventSystem.SetSelectedGameObject(firstButton, new BaseEventData(eventSystem));
-        }
+        // if (interact && Input.GetKeyDown(KeyCode.UpArrow) && !isInteracting && move.inControl)
+        // {
+        //     interactButton.SetActive(false);
+        //     menu.SetActive(true);
+        //     move.inControl = false;
+        //     var eventSystem = EventSystem.current;
+        //     eventSystem.SetSelectedGameObject(firstButton, new BaseEventData(eventSystem));
+        //     isInteracting = true;
+        // }
+        // if(Input.GetKeyDown(KeyCode.LeftControl))
+        // {
+        //     if (!list[0].activeSelf)
+        //     {
+        //         menu.SetActive(false);
+        //         move.inControl = true;
+        //         isInteracting = false;
+        //         return;
+        //     }
+        //     for (int i = 0; i < list.Length; i++)
+        //     {
+        //         list[i].SetActive(false);
+        //     }
+        //     menuButton.SetActive(true);
+        //     var eventSystem = EventSystem.current;
+        //     eventSystem.SetSelectedGameObject(firstButton, new BaseEventData(eventSystem));
+        // }
     }
 }

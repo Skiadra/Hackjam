@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Movement : MonoBehaviour
@@ -23,7 +25,7 @@ public class Movement : MonoBehaviour
     public float normGravity;
     private float dirX;
     private float varX;
-    private float facing;
+    public float facing;
     private float acceleration;
     public float jumpForce;
     public bool doubleJump;
@@ -49,6 +51,21 @@ public class Movement : MonoBehaviour
     private float wallJumpTime;
     // public float xWallJump;
     public float yWallJump;
+
+    //Attack Combat
+    public Transform attackPoint;
+    public float attackRange = 0.5f;
+    public LayerMask enemyLayers;
+    [SerializeField] ParticleSystem slash;
+    public float nextAttackRate = 2f;
+    float nextAttackTime = 0f;
+    public float currentFacingTime = 1;
+    //Charged Attack
+    public float chargeSpeed = 2f;
+    int upSlash = 0;
+    float chargeTime;
+    public float chargeRange = 10f;
+    private bool isCharging;
 
 
     private enum Status { idle, walking, running, jumping, falling }
@@ -100,10 +117,47 @@ public class Movement : MonoBehaviour
             rb.velocity = new Vector2(0, rb.velocity.y);//Kalo lagi buka menu ga bisa gerak
             return;
         }
+
         if (isDashing)
         {
             return;
         }
+
+        if (Input.GetKey(KeyCode.X) && chargeTime < 2)
+        {
+            isCharging = true;
+            if (isCharging)
+            {
+                chargeTime += Time.deltaTime * chargeSpeed;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.X) && chargeTime >= 2)
+        {
+            //Check if arrow up is pressed
+            if (Input.GetKey(KeyCode.UpArrow)) upSlash = 1;
+            else upSlash = 0;
+
+            ChargeAttack();
+            slash.Play();
+            isCharging = false;
+        }
+        else if (Input.GetKeyUp(KeyCode.X) && chargeTime < 2)
+        {
+            chargeTime = 0f;
+            isCharging = false;
+        }
+
+        if (Time.time >= nextAttackTime && !isCharging)
+        {
+            if (Input.GetKeyDown(KeyCode.C) && !wallHug)
+            {
+                Attack();
+                slash.Play();
+                nextAttackTime = Time.time + 1f / nextAttackRate;
+            }
+        }
+
         //HORIZONTAL MOVEMENT
         acceleration = 0;
         multiplierX = 0;
@@ -121,7 +175,8 @@ public class Movement : MonoBehaviour
             acceleration = dirX / 4 * speed;
         }
 
-        rb.velocity = new Vector2(multiplierX * speed + acceleration, rb.velocity.y); //rubah velocity
+        if (!isCharging)
+            rb.velocity = new Vector2(multiplierX * speed + acceleration, rb.velocity.y); //rubah velocity
 
         //VERTICAL MOVEMENT
         if (IsGrounded())
@@ -154,7 +209,7 @@ public class Movement : MonoBehaviour
         else doubleJumpCount = 1;
 
         //Jump
-        if (Input.GetKeyDown(KeyCode.X) && jumpTimeCounter > 0f)
+        if (Input.GetKeyDown(KeyCode.Space) && jumpTimeCounter > 0f && !isCharging)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpTimeCounter = 0;
@@ -170,7 +225,7 @@ public class Movement : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, maxFallSpeed);
 
         //Wall Hug
-        if (OnTheWall() == true && IsGrounded() == false && Input.GetButton("Horizontal") && rb.velocity.y <= 5f && wallHugCounter > 0)
+        if (OnTheWall() == true && IsGrounded() == false && Input.GetButton("Horizontal") && rb.velocity.y <= 5f && wallHugCounter > 0 && !isCharging)
         {
             wallHug = true; //Aktivasi wallhug
             wallJumpTime = .08f;
@@ -205,7 +260,7 @@ public class Movement : MonoBehaviour
         }
 
         //Wall Jump
-        if (Input.GetKeyDown(KeyCode.X) && wallJumpTime > 0 && wallJumpCounter < maxWallJump)
+        if (Input.GetKeyDown(KeyCode.Space) && wallJumpTime > 0 && wallJumpCounter < maxWallJump && !isCharging)
         {
             wallJump = true; //Aktivasi walljump
             wallJumpTime = 0;
@@ -227,13 +282,13 @@ public class Movement : MonoBehaviour
             wallJumpCounter = 0;
         }
 
-        //Dash
-        if (Input.GetKeyDown(KeyCode.Z) && canDash && !wallHug)
-        {
-            StartCoroutine(Dash());//Menyalakan dash
-        }
+        // //Dash
+        // if (Input.GetKeyDown(KeyCode.Z) && canDash && !wallHug)
+        // {
+        //     StartCoroutine(Dash());//Menyalakan dash
+        // }
 
-        Debug.Log(dashReset);
+        // Debug.Log(dashReset);
 
         Animate();
     }
@@ -366,4 +421,40 @@ public class Movement : MonoBehaviour
         canDash = true;
     }
 
+    private void Attack()
+    {
+        currentFacingTime = facing;
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            Debug.Log("Hit");
+        }
+    }
+
+    private void ChargeAttack()
+    {
+        currentFacingTime = facing;
+
+        Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(new Vector2(attackPoint.position.x +
+        transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash), attackPoint.position.y +
+        transform.localScale.y * chargeRange / 2 * upSlash),
+        new Vector2(transform.localScale.x * chargeRange * (1 - upSlash), 1 + (transform.localScale.y * chargeRange * upSlash)),
+        0, enemyLayers);
+
+        foreach (Collider2D enemy in hitEnemies)
+        {
+            Debug.Log("Charge Hit");
+        }
+        chargeTime = 0f;
+    }
+
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        Gizmos.DrawCube(new Vector3(attackPoint.position.x +
+        transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash),
+        attackPoint.position.y + transform.localScale.y * chargeRange / 2 * upSlash),
+        new Vector2(transform.localScale.x * chargeRange * (1 - upSlash) + 1, 1 + (transform.localScale.y * chargeRange * upSlash)));
+    }
 }
