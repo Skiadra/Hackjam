@@ -1730,6 +1730,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 70095140875472920, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
+      propertyPath: looping
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 70095140875472920, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
+      propertyPath: lengthInSec
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 70095140875472920, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
+      propertyPath: InitialModule.startSize.scalar
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 70095140875472920, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4409511793369587643, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
       propertyPath: m_Camera
       value: 
@@ -1793,6 +1809,10 @@ PrefabInstance:
     - target: {fileID: 4409511793538952147, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4409511793538952149, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
+      propertyPath: attackRange
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4409511793538952153, guid: f5dc3e258ed8c854bb3269a7e321c005, type: 3}
       propertyPath: m_Name

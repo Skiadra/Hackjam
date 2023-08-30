@@ -55,6 +55,8 @@ public class Movement : MonoBehaviour
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
     [SerializeField] ParticleSystem slash;
+    public float nextAttackRate = 2f;
+    float nextAttackTime = 0f;
 
 
     private enum Status { idle, walking, running, jumping, falling }
@@ -111,10 +113,14 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Time.time >= nextAttackTime)
         {
-            slash.Play();
-            Attack();
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                slash.Play();
+                Attack();
+                nextAttackTime = Time.time + 1f / nextAttackRate;
+            }
         }
 
         //HORIZONTAL MOVEMENT
