@@ -57,6 +57,7 @@ public class Movement : MonoBehaviour
     public float attackRange = 0.5f;
     public LayerMask enemyLayers;
     [SerializeField] ParticleSystem slash;
+    [SerializeField] ParticleSystem chargeSlash;
     public float nextAttackRate = 2f;
     float nextAttackTime = 0f;
     public float currentFacingTime = 1;
@@ -139,7 +140,7 @@ public class Movement : MonoBehaviour
             else upSlash = 0;
 
             ChargeAttack();
-            slash.Play();
+            chargeSlash.Play();
             isCharging = false;
         }
         else if (Input.GetKeyUp(KeyCode.X) && chargeTime < 2)
