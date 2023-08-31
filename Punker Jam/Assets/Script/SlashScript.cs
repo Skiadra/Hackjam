@@ -6,20 +6,22 @@ using UnityEngine;
 public class SlashScript : MonoBehaviour
 {
 
+    float xMulti;
+    float yMulti;
     float x;
-    float y;
-    int a;
+    ParticleSystem ps;
 
     void Start()
     {
         x = gameObject.transform.localPosition.x;
+        ps = gameObject.GetComponent<ParticleSystem>();
     }
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow)) a = 1;
-        else a = 0;
-        Debug.Log(gameObject.transform.localPosition.x);
-        gameObject.transform.localPosition = new Vector2(x * Movement.move.currentFacingTime * (1 - a), 1 * a);
+        xMulti = Movement.move.currentFacingTime;
+        yMulti = Movement.move.upSlash;
+        if (!ps.isPlaying)
+            gameObject.transform.localPosition = new Vector2(x * xMulti * (1 - yMulti), 1 * yMulti);
     }
 }

@@ -18,6 +18,8 @@ public class Movement : MonoBehaviour
     //SaveLoadSystem
     [SerializeField] private bool saveLoadSystem;
 
+    [Header("Basic Movement")]
+
     public float speed;
     public bool inControl;
     private float multiplierX;
@@ -32,6 +34,9 @@ public class Movement : MonoBehaviour
     private int doubleJumpCount;
     [SerializeField] private float coyoteTime;
     private float jumpTimeCounter;
+
+    [Header("Dashing")]
+
     //Dashing Var
     [SerializeField] private bool canDash;
     private bool isDashing = false;
@@ -40,6 +45,9 @@ public class Movement : MonoBehaviour
     private bool dashReset;
     public bool canDashReset = false;
     [SerializeField] private float dashingPower;
+
+
+    [Header("Wall Variable")]
     //WallMovement
     private bool wallHug;
     public float wallHugTime;
@@ -52,6 +60,9 @@ public class Movement : MonoBehaviour
     // public float xWallJump;
     public float yWallJump;
 
+
+    [Header("Melee")]
+
     //Attack Combat
     public Transform attackPoint;
     public float attackRange = 0.5f;
@@ -63,10 +74,12 @@ public class Movement : MonoBehaviour
     public float currentFacingTime = 1;
     //Charged Attack
     public float chargeSpeed = 2f;
-    int upSlash = 0;
+    public int upSlash = 0;
     float chargeTime;
     public float chargeRange = 10f;
     private bool isCharging;
+    public float chargeDirection;
+    public int upCharge;
 
 
     private enum Status { idle, walking, running, jumping, falling }
@@ -108,6 +121,7 @@ public class Movement : MonoBehaviour
         anima = GetComponent<Animator>();
         doubleJumpCount = 0;
         inControl = true;
+        facing = -1;
     }
 
     // Update is called once per frame
@@ -124,6 +138,13 @@ public class Movement : MonoBehaviour
             return;
         }
 
+        //ATTACK SEGMENT =====================================================================================================
+        //Check if arrow up is pressed
+        if (Input.GetKey(KeyCode.UpArrow)) upSlash = 1;
+        else upSlash = 0;
+        currentFacingTime = facing;
+
+        //Charge Attack
         if (Input.GetKey(KeyCode.X) && chargeTime < 2)
         {
             isCharging = true;
@@ -135,10 +156,6 @@ public class Movement : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.X) && chargeTime >= 2)
         {
-            //Check if arrow up is pressed
-            if (Input.GetKey(KeyCode.UpArrow)) upSlash = 1;
-            else upSlash = 0;
-
             ChargeAttack();
             chargeSlash.Play();
             isCharging = false;
@@ -149,29 +166,29 @@ public class Movement : MonoBehaviour
             isCharging = false;
         }
 
+        //Normal Attack
         if (Time.time >= nextAttackTime && !isCharging)
         {
             if (Input.GetKeyDown(KeyCode.C) && !wallHug)
             {
                 Attack();
-                slash.Play();
                 nextAttackTime = Time.time + 1f / nextAttackRate;
+                slash.Play();
             }
         }
 
-        //HORIZONTAL MOVEMENT
+        //HORIZONTAL MOVEMENT ===========================================================================================================
         acceleration = 0;
         multiplierX = 0;
         dirX = Input.GetAxis("Horizontal");
         varX = Input.GetAxisRaw("Horizontal");
 
-        //Kalo di pencet kanan kiri speed max
         if (varX != 0)
         {
             facing = varX;
             multiplierX = varX;
         }
-        else if (dirX != 0 && varX == 0) //Kalau horizontal move key baru dilepas bakal tetep ada akselerasi
+        else if (dirX != 0 && varX == 0)
         {
             acceleration = dirX / 4 * speed;
         }
@@ -179,7 +196,7 @@ public class Movement : MonoBehaviour
         if (!isCharging)
             rb.velocity = new Vector2(multiplierX * speed + acceleration, rb.velocity.y); //rubah velocity
 
-        //VERTICAL MOVEMENT
+        //VERTICAL MOVEMENT========================================================================================================
         if (IsGrounded())
         {
             jumpTimeCounter = coyoteTime;
@@ -424,8 +441,9 @@ public class Movement : MonoBehaviour
 
     private void Attack()
     {
-        currentFacingTime = facing;
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
+
+
         foreach (Collider2D enemy in hitEnemies)
         {
             Debug.Log("Hit");
@@ -434,7 +452,10 @@ public class Movement : MonoBehaviour
 
     private void ChargeAttack()
     {
-        currentFacingTime = facing;
+        chargeDirection = facing;
+        //Check if arrow up is pressed
+        if (Input.GetKey(KeyCode.UpArrow)) upCharge = 1;
+        else upCharge = 0;
 
         Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(new Vector2(attackPoint.position.x +
         transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash), attackPoint.position.y +
