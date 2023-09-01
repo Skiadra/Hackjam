@@ -47,6 +47,7 @@ public class ExpProgression : MonoBehaviour
 
     private void LevelUp()
     {
+        Movement.move.inControl = false;
         justLevelUp = true;
         levelUpScreen.SetActive(true);
         currentLevel++;

@@ -81,7 +81,7 @@ public class Movement : MonoBehaviour
     private bool isCharging;
 
 
-    private enum Status { idle, walking, running, jumping, falling }
+    private enum Status { idle, walking, running, jumping, falling, wallSliding }
     private Status state = Status.idle;
     private void Awake()
     {
@@ -327,13 +327,13 @@ public class Movement : MonoBehaviour
 
         if (dirX > 0 && wallHug == false)
         {
-            sprite.flipX = true;
+            sprite.flipX = false;
             state = Status.walking;
         }
         else if (dirX < 0 && wallHug == false)
         {
             state = Status.walking;
-            sprite.flipX = false;
+            sprite.flipX = true;
         }
         else
         {
@@ -359,6 +359,16 @@ public class Movement : MonoBehaviour
             sprite.flipX = true;
         }
 
+        if (wallHug)
+        {
+            state = Status.wallSliding;
+        }
+
+        if (isCharging)
+        {
+            state = Status.idle;
+        }
+
         anima.SetInteger("state", (int)state);
     }
 
@@ -370,7 +380,7 @@ public class Movement : MonoBehaviour
 
     private bool OnTheWall()
     {
-        return Physics2D.BoxCast(collide.bounds.center, new Vector2(collide.size.x + .2f, collide.size.y - .5f), 0f, new Vector2(0, 0), 0.1f, jumpableGround);
+        return Physics2D.BoxCast(collide.bounds.center, new Vector2(collide.size.x + .1f, collide.size.y - .5f), 0f, new Vector2(0, 0), 0.1f, jumpableGround);
     }
 
     private void WallJumpOff()
@@ -480,10 +490,10 @@ public class Movement : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-        Gizmos.DrawCube(new Vector3(attackPoint.position.x +
-        transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash),
-        attackPoint.position.y + transform.localScale.y * chargeRange / 2 * upSlash),
-        new Vector2(transform.localScale.x * chargeRange * (1 - upSlash) + 1, 1 + (transform.localScale.y * chargeRange * upSlash)));
+        // Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+        // Gizmos.DrawCube(new Vector3(attackPoint.position.x +
+        // transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash),
+        // attackPoint.position.y + transform.localScale.y * chargeRange / 2 * upSlash),
+        // new Vector2(transform.localScale.x * chargeRange * (1 - upSlash) + 1, 1 + (transform.localScale.y * chargeRange * upSlash)));
     }
 }

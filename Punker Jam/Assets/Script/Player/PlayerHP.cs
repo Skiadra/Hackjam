@@ -19,7 +19,8 @@ public class PlayerHP : MonoBehaviour
     // Y position threshold for falling off the cliff
     private float fallThreshold = -50f;
 
-    private void Start() {
+    private void Start()
+    {
         currentHealth = maxHealth;
         if (hpBar != null)
         {
@@ -33,44 +34,16 @@ public class PlayerHP : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        if (!isHealing) // check if player is currently being healed
+        currentHealth -= damage;
+        if (currentHealth <= 0)
         {
-            currentHealth -= damage;
-            if (currentHealth <= 0)
-            {
-                Die();
-            }
-
-            if (hpBar != null)
-            {
-                hpBar.value = currentHealth;
-            }
+            Die();
         }
-    }
 
-    public void receiveHeal(int heal){
-        if (currentHealth < maxHealth) // check if player is not already at full health
+        if (hpBar != null)
         {
-            currentHealth += heal;
-            if (currentHealth > maxHealth)
-            {
-                currentHealth = maxHealth;
-            }
-
-            if (hpBar != null)
-            {
-                hpBar.value = currentHealth;
-            }
-
-            StartCoroutine(HealingEffect()); // start healing effect
+            hpBar.value = currentHealth;
         }
-    }
-
-    private IEnumerator HealingEffect()
-    {
-        isHealing = true;
-        yield return new WaitForSeconds(1f); // adjust duration of healing effect as needed
-        isHealing = false;
     }
 
     private void Die()
