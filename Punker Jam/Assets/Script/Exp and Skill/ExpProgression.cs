@@ -53,4 +53,5 @@ public class ExpProgression : MonoBehaviour
         currentExp = currentExp - maxExp;
         maxExp += 100;
     }
+
 }

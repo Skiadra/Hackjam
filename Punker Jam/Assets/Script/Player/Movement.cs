@@ -47,10 +47,10 @@ public class Movement : MonoBehaviour
     [SerializeField] private float dashingPower;
 
 
-    [Header("Wall Variable")]
     //WallMovement
-    private bool wallHug;
+    [Header("Wall Movement")]
     public float wallHugTime;
+    private bool wallHug;
     private float wallHugCounter;
     public bool absorb = false;
     private bool wallJump;
@@ -64,8 +64,9 @@ public class Movement : MonoBehaviour
     [Header("Melee")]
 
     //Attack Combat
+    public int attack; //Damage
     public Transform attackPoint;
-    public float attackRange = 0.5f;
+    public float attackRange = 1f;
     public LayerMask enemyLayers;
     [SerializeField] ParticleSystem slash;
     [SerializeField] ParticleSystem chargeSlash;
@@ -78,8 +79,6 @@ public class Movement : MonoBehaviour
     float chargeTime;
     public float chargeRange = 10f;
     private bool isCharging;
-    public float chargeDirection;
-    public int upCharge;
 
 
     private enum Status { idle, walking, running, jumping, falling }
@@ -164,18 +163,29 @@ public class Movement : MonoBehaviour
         {
             chargeTime = 0f;
             isCharging = false;
+
+            //Normal Attack
+            if (Time.time >= nextAttackTime)
+            {
+                if (!wallHug)
+                {
+                    Attack();
+                    nextAttackTime = Time.time + 1f / nextAttackRate;
+                    slash.Play();
+                }
+            }
         }
 
         //Normal Attack
-        if (Time.time >= nextAttackTime && !isCharging)
-        {
-            if (Input.GetKeyDown(KeyCode.C) && !wallHug)
-            {
-                Attack();
-                nextAttackTime = Time.time + 1f / nextAttackRate;
-                slash.Play();
-            }
-        }
+        // if (Time.time >= nextAttackTime && !isCharging)
+        // {
+        //     if (Input.GetKeyDown(KeyCode.C) && !wallHug)
+        //     {
+        //         Attack();
+        //         nextAttackTime = Time.time + 1f / nextAttackRate;
+        //         slash.Play();
+        //     }
+        // }
 
         //HORIZONTAL MOVEMENT ===========================================================================================================
         acceleration = 0;
@@ -227,7 +237,7 @@ public class Movement : MonoBehaviour
         else doubleJumpCount = 1;
 
         //Jump
-        if (Input.GetKeyDown(KeyCode.Space) && jumpTimeCounter > 0f && !isCharging)
+        if (Input.GetKeyDown(KeyCode.Z) && jumpTimeCounter > 0f && !isCharging)
         {
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);
             jumpTimeCounter = 0;
@@ -278,7 +288,7 @@ public class Movement : MonoBehaviour
         }
 
         //Wall Jump
-        if (Input.GetKeyDown(KeyCode.Space) && wallJumpTime > 0 && wallJumpCounter < maxWallJump && !isCharging)
+        if (Input.GetKeyDown(KeyCode.Z) && wallJumpTime > 0 && wallJumpCounter < maxWallJump && !isCharging)
         {
             wallJump = true; //Aktivasi walljump
             wallJumpTime = 0;
@@ -446,17 +456,13 @@ public class Movement : MonoBehaviour
 
         foreach (Collider2D enemy in hitEnemies)
         {
+            enemy.GetComponent<TestEnemy>().TakeDamage(attack);
             Debug.Log("Hit");
         }
     }
 
     private void ChargeAttack()
     {
-        chargeDirection = facing;
-        //Check if arrow up is pressed
-        if (Input.GetKey(KeyCode.UpArrow)) upCharge = 1;
-        else upCharge = 0;
-
         Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(new Vector2(attackPoint.position.x +
         transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash), attackPoint.position.y +
         transform.localScale.y * chargeRange / 2 * upSlash),
@@ -465,6 +471,7 @@ public class Movement : MonoBehaviour
 
         foreach (Collider2D enemy in hitEnemies)
         {
+            enemy.GetComponent<TestEnemy>().TakeDamage(attack * 2);
             Debug.Log("Charge Hit");
         }
         chargeTime = 0f;

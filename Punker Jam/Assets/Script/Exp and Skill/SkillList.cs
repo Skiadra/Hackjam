@@ -98,4 +98,29 @@ public class SkillList : MonoBehaviour
         selectionSuccess = false;
         Time.timeScale = 1f;
     }
+
+    public void AttackUp()
+    {
+        Movement.move.attack += 1;
+    }
+
+    public void SpeedUp()
+    {
+        Movement.move.speed += 1;
+    }
+
+    public void WallJumpUp()
+    {
+        Movement.move.maxWallJump += 1;
+    }
+
+    public void QuickerCharge()
+    {
+        Movement.move.chargeSpeed += 1;
+    }
+
+    public void AttackSpeedUp()
+    {
+        Movement.move.nextAttackRate -= .1f;
+    }
 }

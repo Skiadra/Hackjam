@@ -17,12 +17,12 @@ public class PlayerData
 
     public PlayerData(Movement mov)
     {
-        canDoubleJump = mov.doubleJump; //Save kemampuan double jump
-        canDashReset = mov.canDashReset; //Save kemampuan reset dash
-        jumpForce = mov.jumpForce; //Save kemampuan high jump
-        canAbsorb = mov.absorb; //Save kemampuan absorb
-        maxFallSpeed = mov.maxFallSpeed; //Save kemampuan slow drop
-        maxWallJump = mov.maxWallJump; //Save banyak walljump
+        // canDoubleJump = mov.doubleJump; //Save kemampuan double jump
+        // canDashReset = mov.canDashReset; //Save kemampuan reset dash
+        // jumpForce = mov.jumpForce; //Save kemampuan high jump
+        // canAbsorb = mov.absorb; //Save kemampuan absorb
+        // maxFallSpeed = mov.maxFallSpeed; //Save kemampuan slow drop
+        // maxWallJump = mov.maxWallJump; //Save banyak walljump
         activeSceneIndex = SceneManager.GetActiveScene().buildIndex; //Save last active scene
 
         //Save unlocked skill

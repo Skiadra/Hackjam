@@ -9,7 +9,7 @@ public class SelectedSkill : MonoBehaviour
     public void Selected()
     {
         Text selectedText = gameObject.GetComponentInChildren<Text>();
-        SkillList.skillSystem.SkillSet.Remove(selectedText.text);
+        SkillList.skillSystem.Invoke(selectedText.text, 0f);
         SkillList.skillSystem.ResetSkillButtons();
         LevelUpScreen.SetActive(false);
         // Movement.move.inControl = true;
