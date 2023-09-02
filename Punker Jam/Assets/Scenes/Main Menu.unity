@@ -2082,17 +2082,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1162015268}
     - target: {fileID: 5363030150308934664, guid: fb221993e8166cc42b2e23edef24e687, type: 3}
-      propertyPath: addSkillPoints
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5363030150308934664, guid: fb221993e8166cc42b2e23edef24e687, type: 3}
       propertyPath: typeSelectionUI
       value: 
       objectReference: {fileID: 483274383}
-    - target: {fileID: 5363030150308934665, guid: fb221993e8166cc42b2e23edef24e687, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5363030150308934665, guid: fb221993e8166cc42b2e23edef24e687, type: 3}
       propertyPath: m_LocalPosition.x
       value: -7.8508863
