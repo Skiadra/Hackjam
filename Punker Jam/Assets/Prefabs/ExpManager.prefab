@@ -59,12 +59,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   selectionSuccess: 0
   SkillSet:
-  - A
-  - B
-  - C
-  - D
-  - E
-  - F
-  - G
+  - AttackUp
+  - SpeedUp
+  - WallJumpUp
+  - QuickerCharge
+  - AttackSpeedUp
   skillOne: {fileID: 0}
   skillTwo: {fileID: 0}

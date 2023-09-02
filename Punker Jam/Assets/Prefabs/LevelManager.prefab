@@ -47,3 +47,4 @@ MonoBehaviour:
   pauseMenu: {fileID: 0}
   firstPauseButton: {fileID: 0}
   guide: {fileID: 0}
+  typeSelectionUI: {fileID: 0}
