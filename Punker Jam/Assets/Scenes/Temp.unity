@@ -2178,6 +2178,14 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1920565432873835960, guid: c3063987375c34247b5612f27cd20182, type: 3}
+      propertyPath: m_Size.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1920565432873835960, guid: c3063987375c34247b5612f27cd20182, type: 3}
+      propertyPath: m_Size.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1920565432873835960, guid: c3063987375c34247b5612f27cd20182, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 79b01ff102f2a304f9a20956b0542f83, type: 3}
@@ -2290,6 +2298,10 @@ PrefabInstance:
       value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 2549613392658900615, guid: c3063987375c34247b5612f27cd20182, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
+      objectReference: {fileID: 0}
+    - target: {fileID: 2549613392658900615, guid: c3063987375c34247b5612f27cd20182, type: 3}
       propertyPath: ShapeModule.alignToDirection
       value: 1
       objectReference: {fileID: 0}
@@ -2300,6 +2312,14 @@ PrefabInstance:
     - target: {fileID: 3908007615229659949, guid: c3063987375c34247b5612f27cd20182, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.29
+      objectReference: {fileID: 0}
+    - target: {fileID: 3967433325416852285, guid: c3063987375c34247b5612f27cd20182, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 82e797f132bbe3644a9584f1ac4bba7e, type: 2}
+    - target: {fileID: 5944583201738501573, guid: c3063987375c34247b5612f27cd20182, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6256947099427494276, guid: c3063987375c34247b5612f27cd20182, type: 3}
       propertyPath: m_LocalPosition.x
