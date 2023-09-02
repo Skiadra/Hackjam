@@ -16,7 +16,7 @@ public class Movement : MonoBehaviour
     [SerializeField] private LayerMask jumpableGround;
 
     //SaveLoadSystem
-    [SerializeField] private bool saveLoadSystem;
+    private bool saveLoadSystem = false;
 
     [Header("Basic Movement")]
 
@@ -38,7 +38,7 @@ public class Movement : MonoBehaviour
     [Header("Dashing")]
 
     //Dashing Var
-    [SerializeField] private bool canDash;
+    public bool canDash;
     private bool isDashing = false;
     private float dashingTime = 0.15f;
     private float dashingCooldown = 1f;
@@ -79,6 +79,7 @@ public class Movement : MonoBehaviour
     float chargeTime;
     public float chargeRange = 10f;
     private bool isCharging;
+    public bool isMelee = true;
 
 
     private enum Status { idle, walking, running, jumping, falling, wallSliding }
@@ -93,6 +94,11 @@ public class Movement : MonoBehaviour
         {
             move = this;
         }
+    }
+
+    private void OnEnable()
+    {
+        isMelee = GameManager.isMelee;
     }
 
     // Start is called before the first frame update
@@ -138,40 +144,42 @@ public class Movement : MonoBehaviour
         }
 
         //ATTACK SEGMENT =====================================================================================================
-        //Check if arrow up is pressed
-        if (Input.GetKey(KeyCode.UpArrow)) upSlash = 1;
-        else upSlash = 0;
-        currentFacingTime = facing;
+        if (isMelee)
+        {//Check if arrow up is pressed
+            if (Input.GetKey(KeyCode.UpArrow)) upSlash = 1;
+            else upSlash = 0;
+            currentFacingTime = facing;
 
-        //Charge Attack
-        if (Input.GetKey(KeyCode.X) && chargeTime < 2)
-        {
-            isCharging = true;
-            if (isCharging)
+            //Charge Attack
+            if (Input.GetKey(KeyCode.X) && chargeTime < 2)
             {
-                chargeTime += Time.deltaTime * chargeSpeed;
-            }
-        }
-
-        if (Input.GetKeyUp(KeyCode.X) && chargeTime >= 2)
-        {
-            ChargeAttack();
-            chargeSlash.Play();
-            isCharging = false;
-        }
-        else if (Input.GetKeyUp(KeyCode.X) && chargeTime < 2)
-        {
-            chargeTime = 0f;
-            isCharging = false;
-
-            //Normal Attack
-            if (Time.time >= nextAttackTime)
-            {
-                if (!wallHug)
+                isCharging = true;
+                if (isCharging)
                 {
-                    Attack();
-                    nextAttackTime = Time.time + 1f / nextAttackRate;
-                    slash.Play();
+                    chargeTime += Time.deltaTime * chargeSpeed;
+                }
+            }
+
+            if (Input.GetKeyUp(KeyCode.X) && chargeTime >= 2)
+            {
+                ChargeAttack();
+                chargeSlash.Play();
+                isCharging = false;
+            }
+            else if (Input.GetKeyUp(KeyCode.X) && chargeTime < 2)
+            {
+                chargeTime = 0f;
+                isCharging = false;
+
+                //Normal Attack
+                if (Time.time >= nextAttackTime)
+                {
+                    if (!wallHug)
+                    {
+                        Attack();
+                        nextAttackTime = Time.time + 1f / nextAttackRate;
+                        slash.Play();
+                    }
                 }
             }
         }
@@ -225,7 +233,7 @@ public class Movement : MonoBehaviour
             if (dashReset)
             {
                 StopCoroutine(Dash());
-                canDash = true;
+                // canDash = true;
                 dashReset = false;
             }
             doubleJumpCount++;
@@ -368,7 +376,6 @@ public class Movement : MonoBehaviour
         {
             state = Status.idle;
         }
-
         anima.SetInteger("state", (int)state);
     }
 
@@ -413,12 +420,18 @@ public class Movement : MonoBehaviour
     {
         PlayerData data = SaveSystem.LoadPlayer();
 
-        doubleJump = data.canDoubleJump;
-        canDashReset = data.canDashReset;
-        jumpForce = data.jumpForce;
-        absorb = data.canAbsorb;
-        maxFallSpeed = data.maxFallSpeed;
+        attack = data.attack;
         maxWallJump = data.maxWallJump;
+        speed = data.speed;
+        chargeSpeed = data.chargeSpeed;
+        nextAttackRate = data.nextAttackRate;
+
+        // doubleJump = data.canDoubleJump;
+        // canDashReset = data.canDashReset;
+        // jumpForce = data.jumpForce;
+        // absorb = data.canAbsorb;
+        // maxFallSpeed = data.maxFallSpeed;
+        // maxWallJump = data.maxWallJump;
         // skillTree.addSkillPoints = data.skillPointsEachLevel;
         // for (int i = 0; i < skillTree.unlocked.Length; i++)
         // {
@@ -461,9 +474,8 @@ public class Movement : MonoBehaviour
 
     private void Attack()
     {
+        anima.SetTrigger("Attack");
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackPoint.position, attackRange, enemyLayers);
-
-
         foreach (Collider2D enemy in hitEnemies)
         {
             enemy.GetComponent<TestEnemy>().TakeDamage(attack);
@@ -473,6 +485,7 @@ public class Movement : MonoBehaviour
 
     private void ChargeAttack()
     {
+        anima.SetTrigger("Attack");
         Collider2D[] hitEnemies = Physics2D.OverlapBoxAll(new Vector2(attackPoint.position.x +
         transform.localScale.x * chargeRange / 2 * currentFacingTime * (1 - upSlash), attackPoint.position.y +
         transform.localScale.y * chargeRange / 2 * upSlash),

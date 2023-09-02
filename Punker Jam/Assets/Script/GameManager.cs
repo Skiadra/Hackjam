@@ -8,9 +8,11 @@ public class GameManager : MonoBehaviour
     int index;
     public static bool loadStat;
     public static bool newStat;
+    public static bool isMelee;
     public GameObject pauseMenu;
     public GameObject firstPauseButton;
     public GameObject guide;
+    public GameObject typeSelectionUI;
 
     void Awake()
     {
@@ -47,14 +49,33 @@ public class GameManager : MonoBehaviour
         guide.SetActive(true);
     }
 
+    public void TypeSelection()
+    {
+        typeSelectionUI.SetActive(true);
+    }
+
     public void guideMenuOff()
     {
         guide.SetActive(false);
     }
 
+    public void MeleeOn()
+    {
+        isMelee = true;
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+        //Boolean shooter false
+    }
+
+    public void ShooterOn()
+    {
+        isMelee = false;
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+        //Boolean shooter true
+    }
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab) && SceneManager.GetActiveScene().buildIndex != 0)
         {
             Time.timeScale = 0f;
             move.inControl = false;

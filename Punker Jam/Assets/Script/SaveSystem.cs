@@ -7,7 +7,7 @@ public static class SaveSystem
     public static void SavePlayer(Movement mov)
     {
         BinaryFormatter formatter = new BinaryFormatter(); //Instansiasi binaryformatter
-        string path = Application.persistentDataPath + "/playerMovement.rai"; //path data yang akan disimpan
+        string path = Application.persistentDataPath + "/playerData.rai"; //path data yang akan disimpan
         FileStream fs = new FileStream(path, FileMode.Create); //Instansiasi filestream untuk membuat file pada path
         PlayerData data = new PlayerData(mov); //Instansiasi player data
 
@@ -18,7 +18,7 @@ public static class SaveSystem
 
     public static PlayerData LoadPlayer()
     {
-        string path = Application.persistentDataPath + "/playerMovement.rai"; //Path tempat data disimpan
+        string path = Application.persistentDataPath + "/playerData.rai"; //Path tempat data disimpan
         if (File.Exists(path)) // Kalau file exsist di path
         {
             BinaryFormatter formatter = new BinaryFormatter(); //Instansiasi binaryformatter

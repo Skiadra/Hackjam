@@ -3,12 +3,17 @@ using UnityEngine.SceneManagement;
 [System.Serializable]
 public class PlayerData
 {
-    public bool canDoubleJump;
-    public bool canDashReset;
-    public bool canAbsorb;
-    public float jumpForce;
-    public float maxFallSpeed;
+    // public bool canDoubleJump;
+    // public bool canDashReset;
+    // public bool canAbsorb;
+    // public float jumpForce;
+    // public float maxFallSpeed;
+    // public int maxWallJump;
+    public int attack;
     public int maxWallJump;
+    public float speed;
+    public float chargeSpeed;
+    public float nextAttackRate;
     public int activeSceneIndex;
     public bool[] unlockedSkill;
     public int points;
@@ -23,6 +28,11 @@ public class PlayerData
         // canAbsorb = mov.absorb; //Save kemampuan absorb
         // maxFallSpeed = mov.maxFallSpeed; //Save kemampuan slow drop
         // maxWallJump = mov.maxWallJump; //Save banyak walljump
+        attack = mov.attack;
+        maxWallJump = mov.maxWallJump;
+        speed = mov.speed;
+        chargeSpeed = mov.chargeSpeed;
+        nextAttackRate = mov.nextAttackRate;
         activeSceneIndex = SceneManager.GetActiveScene().buildIndex; //Save last active scene
 
         //Save unlocked skill

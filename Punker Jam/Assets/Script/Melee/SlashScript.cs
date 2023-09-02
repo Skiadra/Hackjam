@@ -21,7 +21,30 @@ public class SlashScript : MonoBehaviour
     {
         xMulti = Movement.move.currentFacingTime;
         yMulti = Movement.move.upSlash;
+
+        if (yMulti > 0)
+        {
+            if (!ps.isPlaying)
+            {
+                ps.transform.localRotation = Quaternion.Euler(0, 0, 270);
+            }
+        }
+        else if (xMulti < 0)
+        {
+            if (!ps.isPlaying)
+            {
+                ps.transform.localRotation = Quaternion.Euler(0, 0, 0);
+            }
+        }
+        else if (xMulti > 0)
+        {
+            if (!ps.isPlaying)
+            {
+                ps.transform.localRotation = Quaternion.Euler(0, 180, 0);
+            }
+        }
+
         if (!ps.isPlaying)
-            gameObject.transform.localPosition = new Vector2(x * xMulti * (1 - yMulti), 1 * yMulti);
+            gameObject.transform.localPosition = new Vector2(x * xMulti * (1 - yMulti), 1.3f * yMulti);
     }
 }
